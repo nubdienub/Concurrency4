@@ -7,12 +7,12 @@ public class SoftwareAgent extends	UntypedActor {
 	private Groep groep;
 	private ArrayList<Vak> lijstMetVakken = new ArrayList<Vak>();
 	
-	public SoftwareAgent(Groep groep,int[] vakNummers) {
+	public SoftwareAgent(Groep groep,int[] vakNummers,int rijGrootte, int stoelenPerRij) {
 		
 		this.groep = groep;
 		
 		for (int i = 0; i < vakNummers.length; i++) {
-			Vak v = new Vak(vakNummers[i]);
+			Vak v = new Vak(vakNummers[i],rijGrootte,stoelenPerRij);
 			lijstMetVakken.add(v);
 		}
 	}

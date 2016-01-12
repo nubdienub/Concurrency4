@@ -6,11 +6,11 @@ public class Vak {
 
 	private ArrayList<boolean[]> rijenEnStoelen = new ArrayList<boolean[]>();
 	
-	public Vak(int nummer){
+	public Vak(int nummer,int rijGrootte, int stoelenPerRij){
 		this.nummer = nummer;
 		
-		for (int i = 0; i < 15; i++) {
-			boolean[] arr = new boolean[10];
+		for (int i = 0; i < rijGrootte; i++) {
+			boolean[] arr = new boolean[stoelenPerRij];
 			rijenEnStoelen.add(arr);
 		}
 		
