@@ -1,0 +1,3 @@
+public enum Groep {
+	NOORD1,NOORD2,WEST1,WEST2,ZUID1,ZUID2,VLOER;
+}
