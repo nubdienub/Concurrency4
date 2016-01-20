@@ -35,12 +35,19 @@ public class Vak {
 		return false;
 	}
 	
-	public void reserveren(int stoelNummer){
-		
+	public void reserveren(int stoelNummer, int rijNummer){
+		Status[] rij = rijenEnStoelen.get(rijNummer);
+		rij[stoelNummer] = Status.GERESERVEERD;
 	}
 	
-	public void annuleren(int stoelNummer){
-		
+	public void annuleren(int stoelNummer, int rijNummer){
+		Status[] rij = rijenEnStoelen.get(rijNummer);
+		rij[stoelNummer] = Status.VRIJ;
+	}
+	
+	public void betalen(int stoelNummer, int rijNummer){
+		Status[] rij = rijenEnStoelen.get(rijNummer);
+		rij[stoelNummer] = Status.BETAALD;
 	}
 	
 

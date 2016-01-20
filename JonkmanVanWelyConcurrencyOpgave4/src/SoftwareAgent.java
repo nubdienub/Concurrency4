@@ -48,9 +48,31 @@ public class SoftwareAgent extends	UntypedActor {
 	
 	public void reserveren(int stoelNummer,int vakNummer,int rijNummer){
 		
+		for(Vak v : lijstMetVakken){
+			if (v.getNummer() == vakNummer) {
+				v.reserveren(stoelNummer,rijNummer);
+			}
+		}
+		
 	}
 	
 	public void annuleren(int stoelNummer,int vakNummer,int rijNummer){
+		
+		for(Vak v : lijstMetVakken){
+			if (v.getNummer() == vakNummer) {
+				v.annuleren(stoelNummer, rijNummer);
+			}
+		}
+		
+	}
+	
+	public void betalen(int stoelNummer,int vakNummer,int rijNummer){
+		
+		for(Vak v : lijstMetVakken){
+			if (v.getNummer() == vakNummer) {
+				v.betalen(stoelNummer, rijNummer);
+			}
+		}
 		
 	}
 

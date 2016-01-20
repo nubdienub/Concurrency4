@@ -7,13 +7,4 @@ public class Klant extends	UntypedActor {
 
 	}
 	
-	@Override	
-	public	void	preStart(){	
-
-	}	
-	
-	public	void	postStop(){	
-
-	}	
-
 }
