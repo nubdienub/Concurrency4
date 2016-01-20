@@ -4,13 +4,13 @@ public class Vak {
 	
 	private int nummer;
 
-	private ArrayList<boolean[]> rijenEnStoelen = new ArrayList<boolean[]>();
+	private ArrayList<Status[]> rijenEnStoelen = new ArrayList<Status[]>();
 	
 	public Vak(int nummer,int rijGrootte, int stoelenPerRij){
 		this.nummer = nummer;
 		
 		for (int i = 0; i < rijGrootte; i++) {
-			boolean[] arr = new boolean[stoelenPerRij];
+			Status[] arr = new Status[stoelenPerRij];
 			rijenEnStoelen.add(arr);
 		}
 		
@@ -20,15 +20,15 @@ public class Vak {
 		return nummer;
 	}
 	
-	public ArrayList<boolean[]> getRijenEnStoelen(){
+	public ArrayList<Status[]> getRijenEnStoelen(){
 		return rijenEnStoelen;
 	}
 	
 	public boolean plaatsBeschikbaar(int rijNummer, int stoelNummer){
 		
-		boolean[] stoelen = rijenEnStoelen.get(rijNummer -1);
+		Status[] stoelen = rijenEnStoelen.get(rijNummer -1);
 		
-		if (stoelen[stoelNummer -1] == false) {
+		if (stoelen[stoelNummer -1] == Status.VRIJ) {
 			return true;
 		}
 		
