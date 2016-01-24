@@ -5,9 +5,11 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import bestelling.BestelStatus;
 import bestelling.Bestelling;
+import stoelen.GroepStatus;
 
 public class Klant extends	UntypedActor {
-	private	LoggingAdapter log = Logging.getLogger(getContext().system(), this);
+	
+	private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 	private ActorRef TicketBox;
 	private int klantNummer;
 	private Bestelling bestelling;
@@ -33,42 +35,44 @@ public class Klant extends	UntypedActor {
 			
 			//De bestelling is afgewezen
 			if (b.getStatus().equals(BestelStatus.GEWEIGERD)) {
-				log.info("De bestelling is afgewezen, omdat één of meerdere plekken al bezet zijn!");
+				log.info("Bericht aan de klant: Klant " + b.getKlantNummer() + " bestelling is geweigert, reden: " + b.getRedenWeigering());
 			}
 			
-			//De reservering is gelukt, maar er moet nog wel worden betaald
-			if (b.getStatus().equals(BestelStatus.BETALEN)) {
+			//De gereserveerde plekken zijn betaald
+			if (b.getStatus().equals(BestelStatus.ISGERESERVEERD)) {
 				
-				log.info("De reservering is gelukt maar er moet nog wel worden betaald!");
+				log.info("Bericht aan de klant: Klant " + b.getKlantNummer() + " bestelling is gereserveerd");
+				
 				int g = 1 + (int)(Math.random() * ((2 - 1) + 1));
 				// Gebruiker wil betalen
 				if (g == 1) { 
-					log.info("De gebruiker wil graag zijn bestelling betalen!");
+					b.setStatus(BestelStatus.WILBETALEN);
 					TicketBox.tell(b, getSelf());
 				}
 				// Gebruiker wil niet meer betalen
 				else{ 		 
-					log.info("De gebruiker wil graag zijn bestelling annuleren!");
-					b.setStatus(BestelStatus.ANNULEREN);
+					b.setStatus(BestelStatus.WILANNULEREN);
 					TicketBox.tell(b, getSelf());
 				}
+			}
+			
+			//De gereserveerde plekken zijn betaald
+			if (b.getStatus().equals(BestelStatus.ISBETAALD)) {
+				log.info("Bericht aan de klant: Klant " + b.getKlantNummer() + " bestelling is succesvol betaald!" + " Info over bestelling: " + b.toString());
 				
 			}
 			
 			//De gereserveerde plekken zijn betaald
-			if (b.getStatus().equals(BestelStatus.BETAALD)) {
-				log.info("Gebruiker: " + klantNummer + " heeft zijn bestelling betaald!");
-			}
-			
-			//De gereserveerde plekken zijn betaald
-			if (b.getStatus().equals(BestelStatus.GEANNULEERD)) {
-				log.info("Gebruiker: " + klantNummer + " heeft zijn bestelling geannuleerd!");
+			if (b.getStatus().equals(BestelStatus.ISGEANNULEERD)) {
+				log.info("Bericht aan de klant: Klant " + b.getKlantNummer() + " bestelling is succesvol geannuleerd!");
 			}
 				
-		}		
+		}else{
+			unhandled(obj);
+		}
 	
 	}
-	
+
 	@Override
 	public void preStart() throws Exception {
 		//Zeg tegen de ticket box van het ziggo dome dat ik mijn bestelling wil plaatsen

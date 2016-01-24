@@ -2,6 +2,7 @@ package actoren;
 import java.util.ArrayList;
 import java.util.HashMap;
 import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
@@ -10,41 +11,42 @@ import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
+import bestelling.Bestelling;
 import stoelen.GroepStatus;
-import stoelen.GroepenPunt;
+
+
 
 public class TicketBox extends	UntypedActor {	
+	
+	private HashMap<GroepStatus, ActorRef> mapMetGroepAgents = new HashMap<>();;
+	private Router ticketBoxRouter;
 
-	private ArrayList<ActorRef> lijstMetSoftwareAgents = new ArrayList<ActorRef>();
-	GroepenPunt gpp;
-	
-	private final Router ticketBoxRouter;
-	private ArrayList<Routee> saRoutees = new ArrayList<>();
-	
 	public TicketBox(){	
-		gpp = GroepenPunt.getInstance();	
-		gpp.init();
 		
-	 	ActorRef sa1 = getContext().actorOf(Props.create(SoftwareAgent.class),"softwareAgent1");	
-	 	ActorRef sa2 = getContext().actorOf(Props.create(SoftwareAgent.class),"softwareAgent2");	
-	 	ActorRef sa3 = getContext().actorOf(Props.create(SoftwareAgent.class),"softwareAgent3");	
-	 	ActorRef sa4 = getContext().actorOf(Props.create(SoftwareAgent.class),"softwareAgent4");	
+		ArrayList<Routee> saRoutees = new ArrayList<>();
 		
-	 	lijstMetSoftwareAgents.add(sa1);
-	 	lijstMetSoftwareAgents.add(sa2);
-	 	lijstMetSoftwareAgents.add(sa3);
-	 	lijstMetSoftwareAgents.add(sa4);
-		
-		for (int i = 0; i < lijstMetSoftwareAgents.size(); i++) {
-			saRoutees.add(new ActorRefRoutee(lijstMetSoftwareAgents.get(i)));
+		for (int i = 0; i < GroepStatus.values().length; i++) {
+			mapMetGroepAgents.put(GroepStatus.values()[i], getContext().actorOf(Props.create(GroepAgent.class),"groepAgentActor" + i));
+		}
+
+		for (int i = 0; i < 4; i++) {
+			ActorRef ref = getContext().actorOf(Props.create(SoftwareAgent.class,mapMetGroepAgents),"softwareAgent" + i);
+			getContext().watch(ref);
+			saRoutees.add(new ActorRefRoutee(ref));
 		}
 		
 		ticketBoxRouter = new Router(new RoundRobinRoutingLogic(),saRoutees);
+
 	}
 	
 	@Override
 	public void onReceive(Object obj) throws Exception {
-		ticketBoxRouter.route(obj, getSender());
+		//Als het obj een bestelling is
+		if (obj instanceof Bestelling) {
+			ticketBoxRouter.route(obj, getSender());
+		}else{
+			unhandled(obj);
+		}
 	}
 	
 
